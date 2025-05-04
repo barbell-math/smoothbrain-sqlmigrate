@@ -79,6 +79,11 @@ func Status(ctxt context.Context, p *pgxpool.Pool) (
 // have a status of false in the database and will run any additional migrations
 // that have been added. All migrations will be run in the increasing order and
 // if an error is encountered all further migrations will not be run.
+//
+// All migrations will be run inside a transaction. If any migration fails the
+// entire transaction will be rolled back, there will be no changes to the
+// database, and any migrations that ran successfully before the failed
+// migration will need to be re-run.
 func Run(ctxt context.Context, p *pgxpool.Pool) error {
 	return migrations.Run(ctxt, p)
 }
@@ -186,6 +191,11 @@ func (m *Migrations) Status(
 // have a status of false in the database and will run any additional migrations
 // that have been added. All migrations will be run in the increasing order and
 // if an error is encountered all further migrations will not be run.
+//
+// All migrations will be run inside a transaction. If any migration fails the
+// entire transaction will be rolled back, there will be no changes to the
+// database, and any migrations that ran successfully before the failed
+// migration will need to be re-run.
 func (m *Migrations) Run(ctxt context.Context, p *pgxpool.Pool) error {
 	q := queries.New(p)
 	tx, err := p.BeginTx(ctxt, pgx.TxOptions{})
