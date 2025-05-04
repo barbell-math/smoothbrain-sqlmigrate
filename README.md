@@ -12,7 +12,107 @@ A very simple library that provides a way to perform SQL migrations using pgxDB.
 
 ## Index
 
+- [Variables](<#variables>)
+- [func Load\(fs embed.FS, dir string, postOps map\[migration\]PostMigrationOp\) error](<#Load>)
+- [func Run\(ctxt context.Context, p \*pgxpool.Pool\) error](<#Run>)
+- [func Status\(ctxt context.Context, p \*pgxpool.Pool\) \(\[\]queries.SmoothbrainSqlmigrateVersioning, error\)](<#Status>)
+- [type Migrations](<#Migrations>)
+  - [func \(m \*Migrations\) Load\(sqlFiles embed.FS, dir string, postOps map\[migration\]PostMigrationOp\) error](<#Migrations.Load>)
+  - [func \(m \*Migrations\) Run\(ctxt context.Context, p \*pgxpool.Pool\) error](<#Migrations.Run>)
+  - [func \(m \*Migrations\) Status\(ctxt context.Context, p \*pgxpool.Pool\) \(\[\]queries.SmoothbrainSqlmigrateVersioning, error\)](<#Migrations.Status>)
+- [type PostMigrationOp](<#PostMigrationOp>)
 
+
+## Variables
+
+<a name="MalformedMigrationFileErr"></a>
+
+```go
+var (
+    MalformedMigrationFileErr = errors.New("Malformed migration file")
+    MigrationSequenceErr      = errors.New("Malformed migration sequence")
+    MissingSqlMigrationErr    = errors.New(
+        "A postOp did not have an associated sql migration file",
+    )
+    UnknownMigrationErr = errors.New(
+        "A migration requested from the database was not found",
+    )
+)
+```
+
+<a name="Load"></a>
+## func [Load](<https://github.com/barbell-math/smoothbrain-sqlmigrate/blob/main/sqlMigrate.go#L59>)
+
+```go
+func Load(fs embed.FS, dir string, postOps map[migration]PostMigrationOp) error
+```
+
+Loads a set of migration files from the suppled directory of the supplied embeded file system. An embeded file system is used to encourage all migrations to be baked into the executable so that deploying any application will not also require deploying a dir containing all the migration files. All go\-code post op migrations are also supplied here as well.
+
+<a name="Run"></a>
+## func [Run](<https://github.com/barbell-math/smoothbrain-sqlmigrate/blob/main/sqlMigrate.go#L76>)
+
+```go
+func Run(ctxt context.Context, p *pgxpool.Pool) error
+```
+
+Runs all migrations that need to be run. This will run all migrations that have a status of false in the database and will run any additional migrations that have been added. All migrations will be run in the increasing order and if an error is encountered all further migrations will not be run.
+
+<a name="Status"></a>
+## func [Status](<https://github.com/barbell-math/smoothbrain-sqlmigrate/blob/main/sqlMigrate.go#L65-L68>)
+
+```go
+func Status(ctxt context.Context, p *pgxpool.Pool) ([]queries.SmoothbrainSqlmigrateVersioning, error)
+```
+
+Returns the current status of all migrations. This result will include the status of all operations that are not yet listed in the database.
+
+<a name="Migrations"></a>
+## type [Migrations](<https://github.com/barbell-math/smoothbrain-sqlmigrate/blob/main/sqlMigrate.go#L30-L36>)
+
+
+
+```go
+type Migrations struct {
+    // contains filtered or unexported fields
+}
+```
+
+<a name="Migrations.Load"></a>
+### func \(\*Migrations\) [Load](<https://github.com/barbell-math/smoothbrain-sqlmigrate/blob/main/sqlMigrate.go#L85-L89>)
+
+```go
+func (m *Migrations) Load(sqlFiles embed.FS, dir string, postOps map[migration]PostMigrationOp) error
+```
+
+Loads a set of migration files from the suppled directory of the supplied embeded file system. An embeded file system is used to encourage all migrations to be baked into the executable so that deploying any application will not also require deploying a dir containing all the migration files. All go\-code post op migrations are also supplied here as well.
+
+<a name="Migrations.Run"></a>
+### func \(\*Migrations\) [Run](<https://github.com/barbell-math/smoothbrain-sqlmigrate/blob/main/sqlMigrate.go#L177>)
+
+```go
+func (m *Migrations) Run(ctxt context.Context, p *pgxpool.Pool) error
+```
+
+Runs all migrations that need to be run. This will run all migrations that have a status of false in the database and will run any additional migrations that have been added. All migrations will be run in the increasing order and if an error is encountered all further migrations will not be run.
+
+<a name="Migrations.Status"></a>
+### func \(\*Migrations\) [Status](<https://github.com/barbell-math/smoothbrain-sqlmigrate/blob/main/sqlMigrate.go#L140-L143>)
+
+```go
+func (m *Migrations) Status(ctxt context.Context, p *pgxpool.Pool) ([]queries.SmoothbrainSqlmigrateVersioning, error)
+```
+
+Returns the current status of all migrations. This result will include the status of all operations that are not yet listed in the database.
+
+<a name="PostMigrationOp"></a>
+## type [PostMigrationOp](<https://github.com/barbell-math/smoothbrain-sqlmigrate/blob/main/sqlMigrate.go#L28>)
+
+The function signature for any golang operations that should be performed after the sql migration has been executed.
+
+```go
+type PostMigrationOp func(ctxt context.Context, p *pgxpool.Pool) error
+```
 
 Generated by [gomarkdoc](<https://github.com/princjef/gomarkdoc>)
 
