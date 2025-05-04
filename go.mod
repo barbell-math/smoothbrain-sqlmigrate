@@ -3,7 +3,7 @@ module github.com/barbell-math/smoothbrain-sqlmigrate
 go 1.24.1
 
 require (
-	github.com/barbell-math/smoothbrain-bs v0.0.0-20250503074017-fbec2354308a
+	github.com/barbell-math/smoothbrain-bs v0.0.0-20250504064347-836fa4be179d
 	github.com/barbell-math/smoothbrain-errs v0.0.0-20250425053108-4f68fa9ea8f4
 	github.com/barbell-math/smoothbrain-test v0.0.0-20250425205645-1b8de56049d2
 	github.com/jackc/pgx/v5 v5.7.4
