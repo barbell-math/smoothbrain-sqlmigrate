@@ -51,15 +51,15 @@ var (
 	)
 )
 
-// Loads a set of migration files from the suppled directory of the supplied
-// embeded file system. All sql migration files are expected to have an integer
+// Loads a set of migration files from the supplied directory of the supplied
+// embedded file system. All sql migration files are expected to have an integer
 // for the file name and end with a sql file extension. Migration files are
 // expected to be strictly increasing with no missing numbers.
 //
 // postOps define code that will be run after the corresponding sql migration
 // has been run, as defined by the sql file number. Post ops are not required.
 //
-// An embeded file system is used to encourage all migrations to be baked into
+// An embedded file system is used to encourage all migrations to be baked into
 // the executable so that deploying any application will not also require
 // deploying a dir containing all the migration files.
 func Load(fs embed.FS, dir string, postOps map[migration]PostMigrationOp) error {
@@ -83,15 +83,15 @@ func Run(ctxt context.Context, p *pgxpool.Pool) error {
 	return migrations.Run(ctxt, p)
 }
 
-// Loads a set of migration files from the suppled directory of the supplied
-// embeded file system. All sql migration files are expected to have an integer
+// Loads a set of migration files from the supplied directory of the supplied
+// embedded file system. All sql migration files are expected to have an integer
 // for the file name and end with a sql file extension. Migration files are
 // expected to be strictly increasing with no missing numbers.
 //
 // postOps define code that will be run after the corresponding sql migration
 // has been run, as defined by the sql file number. Post ops are not required.
 //
-// An embeded file system is used to encourage all migrations to be baked into
+// An embedded file system is used to encourage all migrations to be baked into
 // the executable so that deploying any application will not also require
 // deploying a dir containing all the migration files.
 func (m *Migrations) Load(
