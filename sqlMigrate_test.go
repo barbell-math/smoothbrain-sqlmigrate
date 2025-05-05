@@ -25,7 +25,7 @@ func TestLoadFilesBadFileName(t *testing.T) {
 	err := m.Load(
 		badFileName,
 		"testData/badFileName",
-		map[migration]PostMigrationOp{},
+		map[Migration]PostMigrationOp{},
 	)
 	sbtest.ContainsError(t, MalformedMigrationFileErr, err)
 }
@@ -35,14 +35,14 @@ func TestLoadFilesBadSequence(t *testing.T) {
 	err := m.Load(
 		badSequence,
 		"testData/badSequence",
-		map[migration]PostMigrationOp{},
+		map[Migration]PostMigrationOp{},
 	)
 	sbtest.ContainsError(t, MigrationSequenceErr, err)
 }
 
 func TestLoadFilesMissingPostOp(t *testing.T) {
 	m := Migrations{}
-	err := m.Load(okFs, "testData/ok", map[migration]PostMigrationOp{
+	err := m.Load(okFs, "testData/ok", map[Migration]PostMigrationOp{
 		4: func(ctxt context.Context, p *pgxpool.Pool) error { return nil },
 	})
 	sbtest.ContainsError(t, MissingSqlMigrationErr, err)
@@ -50,9 +50,9 @@ func TestLoadFilesMissingPostOp(t *testing.T) {
 
 func TestLoadFilesOk(t *testing.T) {
 	m := Migrations{}
-	err := m.Load(okFs, "testData/ok", map[migration]PostMigrationOp{})
+	err := m.Load(okFs, "testData/ok", map[Migration]PostMigrationOp{})
 	sbtest.Nil(t, err)
-	sbtest.MapsMatch(t, m.sqlMigrations, map[migration]string{
+	sbtest.MapsMatch(t, m.sqlMigrations, map[Migration]string{
 		0: "0.sql",
 		1: "1.sql",
 		2: "2.sql",
