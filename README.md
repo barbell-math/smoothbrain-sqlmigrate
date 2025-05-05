@@ -13,11 +13,12 @@ A very simple library that provides a way to perform SQL migrations using pgxDB.
 ## Index
 
 - [Variables](<#variables>)
-- [func Load\(fs embed.FS, dir string, postOps map\[migration\]PostMigrationOp\) error](<#Load>)
+- [func Load\(fs embed.FS, dir string, postOps map\[Migration\]PostMigrationOp\) error](<#Load>)
 - [func Run\(ctxt context.Context, p \*pgxpool.Pool\) error](<#Run>)
 - [func Status\(ctxt context.Context, p \*pgxpool.Pool\) \(\[\]queries.SmoothbrainSqlmigrateVersioning, error\)](<#Status>)
+- [type Migration](<#Migration>)
 - [type Migrations](<#Migrations>)
-  - [func \(m \*Migrations\) Load\(sqlFiles embed.FS, dir string, postOps map\[migration\]PostMigrationOp\) error](<#Migrations.Load>)
+  - [func \(m \*Migrations\) Load\(sqlFiles embed.FS, dir string, postOps map\[Migration\]PostMigrationOp\) error](<#Migrations.Load>)
   - [func \(m \*Migrations\) Run\(ctxt context.Context, p \*pgxpool.Pool\) error](<#Migrations.Run>)
   - [func \(m \*Migrations\) Status\(ctxt context.Context, p \*pgxpool.Pool\) \(\[\]queries.SmoothbrainSqlmigrateVersioning, error\)](<#Migrations.Status>)
 - [type PostMigrationOp](<#PostMigrationOp>)
@@ -44,7 +45,7 @@ var (
 ## func [Load](<https://github.com/barbell-math/smoothbrain-sqlmigrate/blob/main/sqlMigrate.go#L65>)
 
 ```go
-func Load(fs embed.FS, dir string, postOps map[migration]PostMigrationOp) error
+func Load(fs embed.FS, dir string, postOps map[Migration]PostMigrationOp) error
 ```
 
 Loads a set of migration files from the supplied directory of the supplied embedded file system. All sql migration files are expected to have an integer for the file name and end with a sql file extension. Migration files are expected to be strictly increasing with no missing numbers.
@@ -73,6 +74,15 @@ func Status(ctxt context.Context, p *pgxpool.Pool) ([]queries.SmoothbrainSqlmigr
 
 Returns the current status of all migrations. This result will include the status of all operations that are not yet listed in the database.
 
+<a name="Migration"></a>
+## type [Migration](<https://github.com/barbell-math/smoothbrain-sqlmigrate/blob/main/sqlMigrate.go#L24>)
+
+
+
+```go
+type Migration int
+```
+
 <a name="Migrations"></a>
 ## type [Migrations](<https://github.com/barbell-math/smoothbrain-sqlmigrate/blob/main/sqlMigrate.go#L30-L36>)
 
@@ -88,7 +98,7 @@ type Migrations struct {
 ### func \(\*Migrations\) [Load](<https://github.com/barbell-math/smoothbrain-sqlmigrate/blob/main/sqlMigrate.go#L102-L106>)
 
 ```go
-func (m *Migrations) Load(sqlFiles embed.FS, dir string, postOps map[migration]PostMigrationOp) error
+func (m *Migrations) Load(sqlFiles embed.FS, dir string, postOps map[Migration]PostMigrationOp) error
 ```
 
 Loads a set of migration files from the supplied directory of the supplied embedded file system. All sql migration files are expected to have an integer for the file name and end with a sql file extension. Migration files are expected to be strictly increasing with no missing numbers.

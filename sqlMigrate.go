@@ -21,18 +21,18 @@ import (
 )
 
 type (
-	migration int
+	Migration int
 
 	// The function signature for any golang operations that should be performed
 	// after the sql migration has been executed.
 	PostMigrationOp func(ctxt context.Context, p *pgxpool.Pool) error
 
 	Migrations struct {
-		sqlMigrations  map[migration]string
-		goMigrations   map[migration]PostMigrationOp
+		sqlMigrations  map[Migration]string
+		goMigrations   map[Migration]PostMigrationOp
 		embedFs        embed.FS
 		dir            string
-		maxMigrationId migration
+		maxMigrationId Migration
 	}
 )
 
@@ -62,7 +62,7 @@ var (
 // An embedded file system is used to encourage all migrations to be baked into
 // the executable so that deploying any application will not also require
 // deploying a dir containing all the migration files.
-func Load(fs embed.FS, dir string, postOps map[migration]PostMigrationOp) error {
+func Load(fs embed.FS, dir string, postOps map[Migration]PostMigrationOp) error {
 	return migrations.Load(fs, dir, postOps)
 }
 
@@ -102,9 +102,9 @@ func Run(ctxt context.Context, p *pgxpool.Pool) error {
 func (m *Migrations) Load(
 	sqlFiles embed.FS,
 	dir string,
-	postOps map[migration]PostMigrationOp,
+	postOps map[Migration]PostMigrationOp,
 ) error {
-	m.sqlMigrations = map[migration]string{}
+	m.sqlMigrations = map[Migration]string{}
 	m.goMigrations = postOps
 	m.embedFs = sqlFiles
 	m.dir = dir
@@ -124,17 +124,17 @@ func (m *Migrations) Load(
 		if err != nil {
 			return sberr.AppendError(MalformedMigrationFileErr, err)
 		}
-		m.sqlMigrations[migration(iterMigration)] = fName
+		m.sqlMigrations[Migration(iterMigration)] = fName
 
 		if iterMigration > int64(m.maxMigrationId) {
-			m.maxMigrationId = migration(iterMigration)
+			m.maxMigrationId = Migration(iterMigration)
 		}
 	}
 
 	allIds := slices.Collect(maps.Keys(m.sqlMigrations))
 	slices.Sort(allIds)
 	for i, id := range allIds {
-		if migration(i) != id {
+		if Migration(i) != id {
 			return sberr.Wrap(
 				MigrationSequenceErr,
 				"Missing %d migration. Migrations must be sequential with no gaps.",
@@ -228,7 +228,7 @@ func (m *Migrations) Run(ctxt context.Context, p *pgxpool.Pool) error {
 
 	var sql []byte
 	for _, id := range needToRun {
-		fName, ok := m.sqlMigrations[migration(id)]
+		fName, ok := m.sqlMigrations[Migration(id)]
 		if !ok {
 			return sberr.Wrap(UnknownMigrationErr, "Migration ID: %d", id)
 		}
@@ -239,7 +239,7 @@ func (m *Migrations) Run(ctxt context.Context, p *pgxpool.Pool) error {
 		if _, err = tx.Exec(ctxt, string(sql)); err != nil {
 			return err
 		}
-		if op, ok := m.goMigrations[migration(id)]; ok {
+		if op, ok := m.goMigrations[Migration(id)]; ok {
 			if err = op(ctxt, p); err != nil {
 				return err
 			}
