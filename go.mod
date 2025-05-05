@@ -4,8 +4,8 @@ go 1.24.1
 
 require (
 	github.com/barbell-math/smoothbrain-bs v0.0.0-20250504072551-feab7facc14e
-	github.com/barbell-math/smoothbrain-errs v0.0.0-20250425053108-4f68fa9ea8f4
-	github.com/barbell-math/smoothbrain-test v0.0.0-20250425205645-1b8de56049d2
+	github.com/barbell-math/smoothbrain-errs v0.0.0-20250505014541-5cf84614edb6
+	github.com/barbell-math/smoothbrain-test v0.0.0-20250505014501-62d578f863d7
 	github.com/jackc/pgx/v5 v5.7.4
 )
 
