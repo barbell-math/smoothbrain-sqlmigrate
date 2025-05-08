@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	sbtest "github.com/barbell-math/smoothbrain-test"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5"
 )
 
 var (
@@ -43,7 +43,7 @@ func TestLoadFilesBadSequence(t *testing.T) {
 func TestLoadFilesMissingPostOp(t *testing.T) {
 	m := Migrations{}
 	err := m.Load(okFs, "testData/ok", map[Migration]PostMigrationOp{
-		4: func(ctxt context.Context, p *pgxpool.Pool) error { return nil },
+		4: func(ctxt context.Context, tx pgx.Tx) error { return nil },
 	})
 	sbtest.ContainsError(t, MissingSqlMigrationErr, err)
 }

@@ -25,7 +25,7 @@ type (
 
 	// The function signature for any golang operations that should be performed
 	// after the sql migration has been executed.
-	PostMigrationOp func(ctxt context.Context, p *pgxpool.Pool) error
+	PostMigrationOp func(ctxt context.Context, p pgx.Tx) error
 
 	Migrations struct {
 		sqlMigrations  map[Migration]string
@@ -240,7 +240,7 @@ func (m *Migrations) Run(ctxt context.Context, p *pgxpool.Pool) error {
 			return err
 		}
 		if op, ok := m.goMigrations[Migration(id)]; ok {
-			if err = op(ctxt, p); err != nil {
+			if err = op(ctxt, tx); err != nil {
 				return err
 			}
 		}
