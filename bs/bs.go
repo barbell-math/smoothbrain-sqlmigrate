@@ -9,18 +9,17 @@ func main() {
 	sbbs.RegisterUpdateDepsTarget()
 	sbbs.RegisterGoMarkDocTargets()
 	sbbs.RegisterSqlcTargets("./")
-	sbbs.RegisterCommonGoCmdTargets(sbbs.GoTargets{
-		GenericTestTarget:     true,
-		GenericBenchTarget:    true,
-		GenericFmtTarget:      true,
-		GenericGenerateTarget: true,
-	})
+	sbbs.RegisterCommonGoCmdTargets(sbbs.NewGoTargets().
+		DefaultFmtTarget().
+		DefaultGenerateTarget().
+		DefaultTestTarget(),
+	)
 	sbbs.RegisterMergegateTarget(sbbs.MergegateTargets{
 		CheckDepsUpdated:     true,
 		CheckReadmeGomarkdoc: true,
-		CheckFmt:             true,
-		CheckUnitTests:       true,
-		CheckGeneratedCode:   true,
+		FmtTarget:            sbbs.DefaultFmtTargetName,
+		TestTarget:           sbbs.DefaultTestTargetName,
+		GenerateTarget:       sbbs.DefaultGenerateTargetName,
 		PreStages:            []sbbs.StageFunc{sbbs.TargetAsStage("sqlcInstall")},
 	})
 
